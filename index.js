@@ -382,13 +382,6 @@ class UIManager {
       modalElements.poster.src = posterPlaceholder;
     };
 
-    // Configurar un timeout para reemplazar si no carga en 5 segundos
-    setTimeout(() => {
-      if (!posterImage.complete) {
-        modalElements.poster.src = posterPlaceholder;
-      }
-    }, 5000);
-
     // Intentar cargar el póster desde la URL original o usar el placeholder si no está disponible
     posterImage.src = item.Poster !== "N/A" ? item.Poster : posterPlaceholder;
 
