@@ -71,7 +71,7 @@ class UIManager {
   }
 
   createLoadingSpinner() {
-    const svg = document.createElementNS("https://www.w3.org/2000/svg", "svg");
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     svg.classList.add("loading-spinner");
     svg.setAttribute("viewBox", "25 25 50 50");
     svg.style.position = "fixed"; // Cambié de 'absolute' a 'fixed'
@@ -83,7 +83,7 @@ class UIManager {
     svg.style.display = "none";
   
     const circle = document.createElementNS(
-      "https://www.w3.org/2000/svg",
+      "http://www.w3.org/2000/svg",
       "circle"
     );
     circle.setAttribute("r", "20");
@@ -327,7 +327,7 @@ class UIManager {
   createImageElement(posterUrl) {
     const imgElement = document.createElement("img");
     const posterPlaceholder =
-      "https://via.placeholder.com/400x600?text=No+Poster";
+      "http://via.placeholder.com/400x600?text=No+Poster";
 
     imgElement.src =
       posterUrl && posterUrl !== "N/A" ? posterUrl : posterPlaceholder;
@@ -368,7 +368,7 @@ class UIManager {
 
     // Manejo de la carga del póster
     const posterPlaceholder =
-      "https://via.placeholder.com/400x600?text=No+Poster";
+      "http://via.placeholder.com/400x600?text=No+Poster";
 
     const posterImage = new Image(); // Crear una nueva instancia de Image
 
