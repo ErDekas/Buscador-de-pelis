@@ -592,12 +592,12 @@ class UIManager {
   createD3BarChart(movies, chartId, valueKey, yAxisLabel) {
     // Clear previous chart
     d3.select(`#${chartId}`).html("");
-
+  
     // Set up chart dimensions
     const margin = { top: 50, right: 180, bottom: 20, left: 20 };
     const width = 800 - margin.left - margin.right;
     const height = 300 - margin.top - margin.bottom;
-
+  
     // Create SVG
     const svg = d3
       .select(`#${chartId}`)
@@ -606,8 +606,8 @@ class UIManager {
       .attr("height", height + margin.top + margin.bottom)
       .append("g")
       .attr("transform", `translate(${margin.left},${margin.top})`);
-
-    // Prepare data con lógica mejorada para diferentes tipos de datos
+  
+    // Prepare data with improved logic for different data types
     const processValue = (movie) => {
       switch (valueKey) {
         case "imdbRating":
@@ -619,31 +619,31 @@ class UIManager {
             ? parseFloat(movie[valueKey].replace(/\$/g, "").replace(/,/g, ""))
             : 0;
         case "Year":
-          // Nuevo caso para manejar el año para series
           return parseInt(movie[valueKey]);
         default:
           return 0;
       }
     };
-
+  
     const data = movies.map((movie) => ({
+      id: movie.imdbID,
       title: movie.Title,
       value: processValue(movie),
     }));
-
-    // Y scale
+  
+    // Y scale - IMPORTANT CHANGE: use array order to preserve list order
     const y = d3
       .scaleBand()
       .range([0, height])
       .padding(0.1)
-      .domain(data.map((d) => d.title));
-
+      .domain(data.map((d) => d.id)); // This preserves the original order
+  
     // X scale
     const x = d3
       .scaleLinear()
       .range([0, width])
       .domain([0, d3.max(data, (d) => d.value)]);
-
+  
     // Bars
     svg
       .selectAll(".bar")
@@ -651,34 +651,34 @@ class UIManager {
       .enter()
       .append("rect")
       .attr("class", "bar")
-      .attr("y", (d) => y(d.title))
+      .attr("y", (d) => y(d.id))
       .attr("height", y.bandwidth())
       .attr("x", 0)
       .attr("width", (d) => x(d.value))
       .attr("fill", "#007bff")
       .attr("data-chart-id", chartId)
-      .attr("data-title", (d) => d.title)
+      .attr("data-id", (d) => d.id)
       .on("mouseover", function (event, d) {
-        // Resaltar barra
+        // Highlight bar
         d3.select(this).attr("fill", "#ffcc00");
-
-        // Resaltar <li> correspondiente
+  
+        // Highlight corresponding <li>
         const listItem = document.querySelector(
           `li[data-chart-id="${chartId}"][data-title="${d.title}"]`
         );
         if (listItem) listItem.classList.add("hover");
       })
       .on("mouseout", function (event, d) {
-        // Quitar resaltado de la barra
+        // Remove bar highlight
         d3.select(this).attr("fill", "#007bff");
-
-        // Quitar resaltado del <li> correspondiente
+  
+        // Remove <li> highlight
         const listItem = document.querySelector(
           `li[data-chart-id="${chartId}"][data-title="${d.title}"]`
         );
         if (listItem) listItem.classList.remove("hover");
       });
-
+  
     // Value labels
     svg
       .selectAll(".value-label")
@@ -687,30 +687,41 @@ class UIManager {
       .append("text")
       .attr("class", "value-label")
       .attr("x", (d) => x(d.value) + 5)
-      .attr("y", (d) => y(d.title) + y.bandwidth() / 2)
+      .attr("y", (d) => y(d.id) + y.bandwidth() / 2)
       .attr("alignment-baseline", "middle")
       .attr("fill", "white")
       .text((d) => {
-        // Formato específico según el tipo de dato
+        // Specific formatting based on data type
         switch (valueKey) {
           case "imdbRating":
-            return d.value.toFixed(1);
+            return `${d.value.toFixed(1)} - ${d.title}`;
           case "imdbVotes":
-            return d.value.toLocaleString();
+            return `${d.value.toLocaleString()} - ${d.title}`;
+          case "BoxOffice":
+            return `$${d.value.toLocaleString()} - ${d.title}`;
           case "Year":
-            return d.value;
+            return `${d.value} - ${d.title}`;
           default:
-            return d.value.toFixed(2);
+            return `${d.value.toFixed(2)} - ${d.title}`;
         }
       });
-
+  
     // X axis
     svg
       .append("g")
       .attr("transform", `translate(0,${height})`)
       .attr("style", "color: white")
-      .call(d3.axisBottom(x));
-
+      .call(d3.axisBottom(x).tickFormat((d) => {
+        switch (valueKey) {
+          case "imdbVotes":
+            return d.toLocaleString();
+          case "BoxOffice":
+            return `$${d.toLocaleString()}`;
+          default:
+            return d;
+        }
+      }));
+  
     // Y axis label
     svg
       .append("text")
