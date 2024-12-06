@@ -42,6 +42,7 @@ A dynamic web application that allows users to search for movies and TV series u
 - JavaScript (ES6+)
 - OMDb API
 - D3.js for data visualization
+- THREE.js for a simply snow fall animation
 - Responsive design
 
 ## 🚀 Getting Started
@@ -70,6 +71,7 @@ const CONFIG = {
 ## 📦 Project Structure
 
 - `index.html`: Main HTML structure
+- `Snow.js`: Script THREE.JS for animation
 - `index.js`: JavaScript application logic
 - `style.css`: Styling and responsive design
 - `README.md`: Project documentation
@@ -112,3 +114,4 @@ Project Link: https://buscador-de-pelis-deka.vercel.app/
 
 - [OMDb API](https://www.omdbapi.com/)
 - [D3.js](https://d3js.org/)
+- [THREE.js](https://threejs.org/)
